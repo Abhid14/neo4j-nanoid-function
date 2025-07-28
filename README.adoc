@@ -1,41 +1,46 @@
-# Neo4j NanoID Procedure
+= Neo4j NanoID Procedure
 
 A Neo4j user-defined function that provides NanoID generation capabilities directly within Cypher queries. NanoID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
 
-## Features
+== Features
 
-- 🚀 **Fast**: High-performance ID generation
-- 🔒 **Secure**: Cryptographically strong random generator
-- 📏 **Compact**: Shorter than UUID (21 characters vs 36)
-- 🌐 **URL-safe**: Uses URL-safe characters (A-Za-z0-9_-)
-- ⚙️ **Configurable**: Custom alphabet and size support
-- 🔌 **Native**: Direct integration with Neo4j Cypher queries
+* 🚀 *Fast*: High-performance ID generation
+* 🔒 *Secure*: Cryptographically strong random generator
+* 📏 *Compact*: Shorter than UUID (21 characters vs 36)
+* 🌐 *URL-safe*: Uses URL-safe characters (A-Za-z0-9_-)
+* ⚙️ *Configurable*: Custom alphabet and size support
+* 🔌 *Native*: Direct integration with Neo4j Cypher queries
 
-## Installation
+== Installation
 
-### Prerequisites
+=== Prerequisites
 
-- Neo4j 5.x or later
-- Java 21+
+* Neo4j 5.x or later
+* Java 21+
 
-### Steps
+=== Steps
 
-1. Download the latest JAR from the [releases page](../../releases)
-2. Copy the JAR file to your Neo4j `plugins` directory:
-   ```bash
-   cp neo4j-nanoid-procedure-1.0.0.jar $NEO4J_HOME/plugins/
-   ```
-3. Restart your Neo4j instance
-4. Verify installation:
-   ```cypher
-   RETURN nanoid() AS id;
-   ```
+. Download the latest JAR from the link:../../releases[releases page]
+. Copy the JAR file to your Neo4j `plugins` directory:
++
+[source,bash]
+----
+cp neo4j-nanoid-procedure-1.0.0.jar $NEO4J_HOME/plugins/
+----
+. Restart your Neo4j instance
+. Verify installation:
++
+[source,cypher]
+----
+RETURN nanoid() AS id;
+----
 
-## Usage
+== Usage
 
-### Basic Usage
+=== Basic Usage
 
-```cypher
+[source,cypher]
+----
 // Generate a standard NanoID (21 characters)
 RETURN nanoid() AS id;
 // Result: "V1StGXR8_Z5jdHi6B-myT"
@@ -46,11 +51,12 @@ CREATE (u:User {id: nanoid(), name: 'Alice'});
 // Use in MERGE operations
 MERGE (p:Product {id: nanoid()})
 SET p.name = 'New Product';
-```
+----
 
-### Custom Size
+=== Custom Size
 
-```cypher
+[source,cypher]
+----
 // Generate shorter ID (10 characters)
 RETURN nanoid(10) AS id;
 // Result: "IRFa-VaY2b"
@@ -58,11 +64,12 @@ RETURN nanoid(10) AS id;
 // Generate longer ID (30 characters)  
 RETURN nanoid(30) AS id;
 // Result: "6a-9Znp_MRiuZ8sNFbJ1mxBEq2S3K"
-```
+----
 
-### Custom Alphabet
+=== Custom Alphabet
 
-```cypher
+[source,cypher]
+----
 // Use only uppercase letters and numbers
 RETURN nanoid.custom('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
 // Result: "A1B2C3D4E5F6"
@@ -74,11 +81,12 @@ RETURN nanoid.custom('0123456789', 8) AS id;
 // Custom alphabet with specific length
 RETURN nanoid.custom('ABCDEF', 16) AS id;
 // Result: "ABCDEFFEDCBABCDE"
-```
+----
 
-### Batch Generation
+=== Batch Generation
 
-```cypher
+[source,cypher]
+----
 // Generate multiple IDs
 UNWIND range(1, 5) AS i
 RETURN nanoid() AS id, i;
@@ -86,44 +94,73 @@ RETURN nanoid() AS id, i;
 // Create multiple nodes with unique IDs
 UNWIND ['Alice', 'Bob', 'Charlie'] AS name
 CREATE (u:User {id: nanoid(), name: name});
-```
+----
 
-## Available Functions
+== Available Functions
 
-| Function | Description | Example |
-|----------|-------------|---------|
-| `nanoid()` | Generate standard 21-character NanoID | `RETURN nanoid()` |
-| `nanoid(size)` | Generate NanoID with custom size | `RETURN nanoid(10)` |
-| `nanoid.custom(alphabet, size)` | Generate with custom alphabet and size | `RETURN nanoid.custom('ABC123', 8)` |
+[cols="1,2,2"]
+|===
+|Function |Description |Example
 
-## Comparison with UUID
+|`nanoid()`
+|Generate standard 21-character NanoID
+|`RETURN nanoid()`
 
-| Feature | NanoID | UUID |
-|---------|--------|------|
-| Length | 21 characters | 36 characters |
-| Alphabet | URL-safe (64 chars) | Hex + hyphens |
-| Collision probability | Same as UUID v4 | 2^122 |
-| Performance | ~60% faster | Standard |
-| URL-friendly | ✅ Yes | ❌ No (hyphens) |
+|`nanoid(size)`
+|Generate NanoID with custom size
+|`RETURN nanoid(10)`
 
-## Use Cases
+|`nanoid.custom(alphabet, size)`
+|Generate with custom alphabet and size
+|`RETURN nanoid.custom('ABC123', 8)`
+|===
 
-- **Primary Keys**: Shorter than UUID, perfect for database IDs
-- **URL Slugs**: URL-safe characters, no encoding needed  
-- **API Keys**: Secure random generation
-- **Session IDs**: Compact and secure
-- **File Names**: Safe for all file systems
+== Comparison with UUID
 
-## Building from Source
+[cols="1,1,1"]
+|===
+|Feature |NanoID |UUID
 
-### Prerequisites
+|Length
+|21 characters
+|36 characters
 
-- Java 21+
-- Maven 3.6+
+|Alphabet
+|URL-safe (64 chars)
+|Hex + hyphens
 
-### Build Steps
+|Collision probability
+|Same as UUID v4
+|2^122
 
-```bash
+|Performance
+|~60% faster
+|Standard
+
+|URL-friendly
+|✅ Yes
+|❌ No (hyphens)
+|===
+
+== Use Cases
+
+* *Primary Keys*: Shorter than UUID, perfect for database IDs
+* *URL Slugs*: URL-safe characters, no encoding needed  
+* *API Keys*: Secure random generation
+* *Session IDs*: Compact and secure
+* *File Names*: Safe for all file systems
+
+== Building from Source
+
+=== Prerequisites
+
+* Java 21+
+* Maven 3.6+
+
+=== Build Steps
+
+[source,bash]
+----
 # Clone the repository
 git clone https://github.com/Abhid14/neo4j-nanoid-procedure.git
 cd neo4j-nanoid-procedure
@@ -133,59 +170,54 @@ cd neo4j-nanoid-procedure
 
 # The JAR will be created in target/
 ls target/*.jar
-```
+----
 
-### Running Tests
+=== Running Tests
 
-```bash
+[source,bash]
+----
 ./mvnw test
-```
+----
 
-## Configuration
+== Configuration
 
 The procedure uses the standard NanoID configuration:
 
-- **Default size**: 21 characters
-- **Default alphabet**: `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters)
-- **Collision probability**: ~1% after generating 1 billion IDs
+* *Default size*: 21 characters
+* *Default alphabet*: `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters)
+* *Collision probability*: ~1% after generating 1 billion IDs
 
-## Performance
+== Performance
 
 Benchmarks on standard hardware:
 
-- **Generation rate**: ~2M IDs/second
-- **Memory usage**: Minimal overhead
-- **Thread safety**: Fully thread-safe
+* *Generation rate*: ~2M IDs/second
+* *Memory usage*: Minimal overhead
+* *Thread safety*: Fully thread-safe
 
-## Dependencies
+== Dependencies
 
-- [jnanoid](https://github.com/aventrix/jnanoid): Core NanoID implementation
-- Neo4j 5.x: Procedure framework
+* link:https://github.com/aventrix/jnanoid[jnanoid]: Core NanoID implementation
+* Neo4j 5.x: Procedure framework
 
-## Contributing
+== Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+. Fork the repository
+. Create a feature branch (`git checkout -b feature/amazing-feature`)
+. Commit your changes (`git commit -m 'Add amazing feature'`)
+. Push to the branch (`git push origin feature/amazing-feature`)
+. Open a Pull Request
 
-## License
+== License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the link:LICENSE[LICENSE] file for details.
 
-## Support
+== Acknowledgments
 
-- 📖 [Documentation](../../wiki)
-- 🐛 [Issue Tracker](../../issues)
-- 💬 [Discussions](../../discussions)
-
-## Acknowledgments
-
-- [NanoID](https://github.com/ai/nanoid) - Original JavaScript implementation
-- [jnanoid](https://github.com/aventrix/jnanoid) - Java port
-- [Neo4j](https://neo4j.com) - Graph database platform
+* link:https://github.com/ai/nanoid[NanoID] - Original JavaScript implementation
+* link:https://github.com/aventrix/jnanoid[jnanoid] - Java port
+* link:https://neo4j.com[Neo4j] - Graph database platform
 
 ---
 
-**Made with ❤️ for the Neo4j community**
+*Made with ❤️ for the Neo4j community*
