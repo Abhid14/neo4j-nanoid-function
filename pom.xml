@@ -1,15 +1,43 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.neo4j.example</groupId>
-  <artifactId>procedure-template</artifactId>
+  <groupId>io.github.abhid14</groupId>
+  <artifactId>neo4j-nanoid-procedure</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <packaging>jar</packaging>
-  <name>Neo4j Procedure Template</name>
-  <description>A template project for building a Neo4j Procedure</description>
+  <name>Neo4j NanoID Procedure</name>
+  <description>A Neo4j user-defined function for generating NanoID - tiny, secure, URL-safe, unique string IDs</description>
+  <url>https://github.com/Abhid14/neo4j-nanoid-procedure</url>
+  <inceptionYear>2025</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>abhid14</id>
+      <name>Abhishek Das</name>
+      <email>abhid14@outlook.com</email>
+      <url>https://github.com/Abhid14</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/Abhid14/neo4j-nanoid-procedure.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/Abhid14/neo4j-nanoid-procedure.git</developerConnection>
+    <url>https://github.com/Abhid14/neo4j-nanoid-procedure</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <properties>
     <java.version>21</java.version>
@@ -41,7 +69,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test Dependencies -->
+    <!-- NanoID dependency -->
+    <dependency>
+      <groupId>com.aventrix.jnanoid</groupId>
+      <artifactId>jnanoid</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+
+    <!-- Test dependencies -->
     <dependency>
       <!-- This is used for a utility that lets us start Neo4j with
            a specific Procedure, which is nice for writing tests. -->
