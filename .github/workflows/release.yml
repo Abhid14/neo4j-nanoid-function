@@ -34,7 +34,7 @@ jobs:
 
       - name: 'Update version in pom.xml'
         run: |
-          sed -i "s/<version>.*<\/version>/<version>${{ steps.extract_version.outputs.VERSION }}<\/version>/" pom.xml
+          sed -i "0,/<version>/{s/<version>[^<]*<\/version>/<version>${{ steps.extract_version.outputs.VERSION }}<\/version>/}" pom.xml
 
       - name: 'Build and package'
         run: ./mvnw --no-transfer-progress clean package
