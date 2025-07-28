@@ -159,6 +159,14 @@
         <version>${maven-shade-plugin.version}</version>
         <configuration>
           <createDependencyReducedPom>false</createDependencyReducedPom>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+              </excludes>
+            </filter>
+          </filters>
         </configuration>
         <executions>
           <execution>
