@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: 'Cache Maven packages'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: 'Extract version from tag'
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: 'Update version in pom.xml'
+        run: |
+          sed -i "s/<version>.*<\/version>/<version>${{ steps.extract_version.outputs.VERSION }}<\/version>/" pom.xml
+
+      - name: 'Build and package'
+        run: ./mvnw --no-transfer-progress clean package
+
+      - name: 'Create Release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/neo4j-nanoid-procedure-*.jar
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

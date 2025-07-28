@@ -31,3 +31,11 @@ jobs:
 
       - name: 'Clean and verify'
         run: ./mvnw --no-transfer-progress clean verify
+
+      - name: 'Upload JAR artifacts'
+        if: github.ref == 'refs/heads/2025.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo4j-nanoid-procedure-jar
+          path: target/neo4j-nanoid-procedure-*.jar
+          retention-days: 30
