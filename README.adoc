@@ -15,8 +15,32 @@ A Neo4j user-defined function that provides NanoID generation capabilities direc
 
 === Prerequisites
 
-* Neo4j 5.x or later
+* Neo4j 5.x or later (tested with Neo4j 2025.03.0)
 * Java 21+
+
+[NOTE]
+====
+This project requires Java 21 or later. If you're using an older Java version, you'll see a build error. 
+
+To check your Java version:
+[source,bash]
+----
+java -version
+----
+
+To install Java 21, consider using link:https://sdkman.io/[SDKMAN!]:
+[source,bash]
+----
+# Install SDKMAN
+curl -s "https://get.sdkman.io" | bash
+
+# Install Java 21
+sdk install java 21.0.2-tem
+
+# Use Java 21 for this project
+sdk use java 21.0.2-tem
+----
+====
 
 === Steps
 
@@ -74,7 +98,11 @@ RETURN nanoid(30) AS id;
 RETURN nanoid.custom('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
 // Result: "A1B2C3D4E5F6"
 
-// Use only digits
+// Use only digits with default size (21 characters)
+RETURN nanoid.custom('0123456789') AS id;
+// Result: "123456789012345678901"
+
+// Use only digits with custom size
 RETURN nanoid.custom('0123456789', 8) AS id;
 // Result: "12345678"
 
@@ -110,10 +138,22 @@ CREATE (u:User {id: nanoid(), name: name});
 |Generate NanoID with custom size
 |`RETURN nanoid(10)`
 
+|`nanoid.custom(alphabet)`
+|Generate with custom alphabet (21 chars default)
+|`RETURN nanoid.custom('ABC123')`
+
 |`nanoid.custom(alphabet, size)`
 |Generate with custom alphabet and size
 |`RETURN nanoid.custom('ABC123', 8)`
 |===
+
+=== Error Handling
+
+The functions include robust error handling:
+
+* **Invalid size**: Negative or zero size values fallback to the standard 21-character NanoID
+* **Empty alphabet**: Empty or null alphabet values fallback to the standard URL-safe alphabet
+* **Thread safety**: All functions are thread-safe and can be used concurrently
 
 == Comparison with UUID
 
@@ -161,6 +201,9 @@ CREATE (u:User {id: nanoid(), name: name});
 
 [source,bash]
 ----
+# Ensure you're using Java 21+
+java -version
+
 # Clone the repository
 git clone https://github.com/Abhid14/neo4j-nanoid-procedure.git
 cd neo4j-nanoid-procedure
@@ -171,6 +214,11 @@ cd neo4j-nanoid-procedure
 # The JAR will be created in target/
 ls target/*.jar
 ----
+
+[TIP]
+====
+If you encounter a Java version error during build, make sure you're using Java 21 or later. The build will fail with older Java versions.
+====
 
 === Running Tests
 
