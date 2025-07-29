@@ -1,20 +1,13 @@
 = Neo4j NanoID Procedure (Extended)
-* 🔒 *Secure*: Cryptographically strong random generator
-* 📏 *Compact*: Shorter than UUID (21 characters vs 36)
-* ⚡ *QuickID*: Ultra-compact 14-character alphanumeric IDs with `quickid()`
-* 🌐 *URL-safe*: Standard NanoID with underscore and dash support
-* ⚙️ *Configurable*: Custom alphabet and size support
-* 🔌 *Native*: Direct integration with Neo4j Cypher queriesD Procedure (Extended)
 
 A Neo4j user-defined function that provides NanoID generation capabilities directly within Cypher queries. NanoID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
 
 == Features
 
-* 🚀 *Fast*: High-performance ID generation
 * 🔒 *Secure*: Cryptographically strong random generator
 * 📏 *Compact*: Shorter than UUID (21 characters vs 36)
-* � *Alphanumeric by Default*: Uses clean A-Za-z0-9 characters (no underscores or dashes)
-* �🌐 *URL-safe Option*: Optional URL-safe characters (A-Za-z0-9_-) with `nanoid.standard()`
+* ⚡ *QuickID*: Ultra-compact 14-character alphanumeric IDs with `quickid()`
+* 🌐 *URL-safe*: Standard NanoID with underscore and dash support
 * ⚙️ *Configurable*: Custom alphabet and size support
 * 🔌 *Native*: Direct integration with Neo4j Cypher queries
 
@@ -25,9 +18,33 @@ A Neo4j user-defined function that provides NanoID generation capabilities direc
 * Neo4j 5.x or later
 * Java 21+
 
+[NOTE]
+====
+This project requires Java 21 or later. If you're using an older Java version, you'll see a build error. 
+
+To check your Java version:
+[source,bash]
+----
+java -version
+----
+
+To install Java 21, consider using link:https://sdkman.io/[SDKMAN!]:
+[source,bash]
+----
+# Install SDKMAN
+curl -s "https://get.sdkman.io" | bash
+
+# Install Java 21
+sdk install java 21.0.2-tem
+
+# Use Java 21 for this project
+sdk use java 21.0.2-tem
+----
+====
+
 === Steps
 
-. Download the latest JAR which has the -extended suffix from the link:../../releases[releases page]
+. Download the latest JAR which has the `-extended` suffix from the link:../../releases[releases page]
 . Copy the JAR file to your Neo4j `plugins` directory:
 +
 [source,bash]
@@ -218,6 +235,11 @@ git checkout extended
 # The JAR will be created in target/
 ls target/*.jar
 ----
+
+[TIP]
+====
+If you encounter a Java version error during build, make sure you're using Java 21 or later. The build will fail with older Java versions.
+====
 
 === Running Tests
 
