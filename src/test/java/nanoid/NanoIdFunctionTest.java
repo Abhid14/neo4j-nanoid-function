@@ -36,33 +36,33 @@ public class NanoIdFunctionTest {
     }
 
     @Test
-    public void shouldGenerateNanoId() {
+    public void shouldGenerateQuickId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN nanoid() AS id").single();
-            String nanoId = record.get("id").asString();
+            Record record = session.run("RETURN quickid() AS id").single();
+            String quickId = record.get("id").asString();
             
-            assertThat(nanoId).isNotNull();
-            assertThat(nanoId).hasSize(21); // Default NanoID size
-            assertThat(nanoId).matches("[A-Za-z0-9]+"); // Standard alphanumeric characters only
+            assertThat(quickId).isNotNull();
+            assertThat(quickId).hasSize(14); // QuickID default size
+            assertThat(quickId).matches("[A-Za-z0-9]+"); // Alphanumeric characters only
         }
     }
 
     @Test
-    public void shouldGenerateCustomSizedNanoId() {
+    public void shouldGenerateCustomSizedQuickId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN nanoid(10) AS id").single();
-            String nanoId = record.get("id").asString();
+            Record record = session.run("RETURN quickid(10) AS id").single();
+            String quickId = record.get("id").asString();
             
-            assertThat(nanoId).isNotNull();
-            assertThat(nanoId).hasSize(10);
-            assertThat(nanoId).matches("[A-Za-z0-9]+"); // Standard alphanumeric characters only
+            assertThat(quickId).isNotNull();
+            assertThat(quickId).hasSize(10);
+            assertThat(quickId).matches("[A-Za-z0-9]+"); // Alphanumeric characters only
         }
     }
 
     @Test
     public void shouldGenerateStandardNanoId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN nanoid.standard() AS id").single();
+            Record record = session.run("RETURN nanoid() AS id").single();
             String nanoId = record.get("id").asString();
             
             assertThat(nanoId).isNotNull();
@@ -74,7 +74,7 @@ public class NanoIdFunctionTest {
     @Test
     public void shouldGenerateStandardSizedNanoId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN nanoid.standard(15) AS id").single();
+            Record record = session.run("RETURN nanoid(15) AS id").single();
             String nanoId = record.get("id").asString();
             
             assertThat(nanoId).isNotNull();
@@ -98,21 +98,33 @@ public class NanoIdFunctionTest {
     @Test
     public void shouldHandleEdgeCases() {
         try (Session session = driver.session()) {
-            // Test with zero size - should fallback to default
-            Record record1 = session.run("RETURN nanoid(0) AS id").single();
-            String nanoId1 = record1.get("id").asString();
-            assertThat(nanoId1).hasSize(21); // Falls back to default size
+            // Test quickid with zero size - should fallback to default
+            Record record1 = session.run("RETURN quickid(0) AS id").single();
+            String quickId1 = record1.get("id").asString();
+            assertThat(quickId1).hasSize(14); // Falls back to quickid default size
             
-            // Test with negative size - should fallback to default
-            Record record2 = session.run("RETURN nanoid.standard(-5) AS id").single();
+            // Test nanoid with negative size - should fallback to default
+            Record record2 = session.run("RETURN nanoid(-5) AS id").single();
             String nanoId2 = record2.get("id").asString();
-            assertThat(nanoId2).hasSize(21); // Falls back to default size
+            assertThat(nanoId2).hasSize(21); // Falls back to nanoid default size
             
-            // Test with empty alphabet - should fallback to default
+            // Test nanoid.custom with empty alphabet - should fallback to default
             Record record3 = session.run("RETURN nanoid.custom('', 10) AS id").single();
             String nanoId3 = record3.get("id").asString();
             assertThat(nanoId3).hasSize(21); // Falls back to default behavior
-            assertThat(nanoId3).matches("[A-Za-z0-9]+"); // Uses standard alphabet
+            assertThat(nanoId3).matches("[A-Za-z0-9_-]+"); // Uses URL-safe alphabet
+        }
+    }
+
+    @Test
+    public void shouldGenerateCustomNanoIdWithAlphabetOnly() {
+        try (Session session = driver.session()) {
+            Record record = session.run("RETURN nanoid.custom('ABCDEF') AS id").single();
+            String nanoId = record.get("id").asString();
+            
+            assertThat(nanoId).isNotNull();
+            assertThat(nanoId).hasSize(21); // Default size when only alphabet is provided
+            assertThat(nanoId).matches("[ABCDEF]+");
         }
     }
 }
