@@ -12,26 +12,27 @@ public class NanoIdFunction {
 
     private static final int NANOID_DEFAULT_SIZE = 21;
 
-    // nanoid functions - standard URL-safe behavior
-    @UserFunction("nanoid")
-    @Description("nanoid() - generates a URL-safe unique ID (21 chars default)")
-    public String nanoid() {
+    // Standard nanoid function - default size
+    @UserFunction("nanoid.generate")
+    @Description("nanoid.generate() - generates a URL-safe unique ID (21 chars)")
+    public String nanoidGenerate() {
         return NanoIdUtils.randomNanoId();
     }
 
-    @UserFunction("nanoid")
-    @Description("nanoid(size) - generates a URL-safe unique ID with custom size")
-    public String nanoidSized(@Name("size") Long size) {
+    // Standard nanoid function - custom size
+    @UserFunction("nanoid.generateSized")
+    @Description("nanoid.generateSized(size) - generates a URL-safe unique ID with custom size")
+    public String nanoidGenerateSized(@Name("size") Long size) {
         if (size == null || size <= 0) {
             return NanoIdUtils.randomNanoId();
         }
         return NanoIdUtils.randomNanoId(new java.util.Random(), NanoIdUtils.DEFAULT_ALPHABET, size.intValue());
     }
 
-    // nanoid.custom functions - fully customizable
-    @UserFunction("nanoid.custom")
-    @Description("nanoid.custom(alphabet) - generates a NanoID with custom alphabet (21 chars default)")
-    public String nanoidCustomAlphabet(@Name("alphabet") String alphabet) {
+    // Custom nanoid function - alphabet only (default size)
+    @UserFunction("nanoid.generateCustom")
+    @Description("nanoid.generateCustom(alphabet) - generates a NanoID with custom alphabet (21 chars)")
+    public String nanoidGenerateCustom(@Name("alphabet") String alphabet) {
         // Validate alphabet: must not be null or empty
         if (alphabet == null || alphabet.trim().isEmpty()) {
             return NanoIdUtils.randomNanoId();
@@ -40,9 +41,10 @@ public class NanoIdFunction {
         return NanoIdUtils.randomNanoId(new java.util.Random(), alphabet.toCharArray(), NANOID_DEFAULT_SIZE);
     }
 
-    @UserFunction("nanoid.custom")
-    @Description("nanoid.custom(alphabet, size) - generates a NanoID with custom alphabet and size")
-    public String nanoidFullyCustom(
+    // Custom nanoid function - alphabet and size
+    @UserFunction("nanoid.generateCustomSized")
+    @Description("nanoid.generateCustomSized(alphabet, size) - generates a NanoID with custom alphabet and size")
+    public String nanoidGenerateCustomSized(
             @Name("alphabet") String alphabet,
             @Name("size") Long size) {
         // Validate alphabet: must not be null or empty
@@ -50,11 +52,9 @@ public class NanoIdFunction {
             return NanoIdUtils.randomNanoId();
         }
         
-        // Validate size: must be positive
-        if (size == null || size <= 0) {
-            return NanoIdUtils.randomNanoId(new java.util.Random(), alphabet.toCharArray(), NANOID_DEFAULT_SIZE);
-        }
+        // Use default size if not provided or invalid
+        int finalSize = (size == null || size <= 0) ? NANOID_DEFAULT_SIZE : size.intValue();
         
-        return NanoIdUtils.randomNanoId(new java.util.Random(), alphabet.toCharArray(), size.intValue());
+        return NanoIdUtils.randomNanoId(new java.util.Random(), alphabet.toCharArray(), finalSize);
     }
 }

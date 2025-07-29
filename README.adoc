@@ -56,7 +56,7 @@ cp neo4j-nanoid-procedure-1.0.0.jar $NEO4J_HOME/plugins/
 +
 [source,cypher]
 ----
-RETURN nanoid() AS id;
+RETURN nanoid.generate() AS id;
 ----
 
 == Usage
@@ -66,14 +66,14 @@ RETURN nanoid() AS id;
 [source,cypher]
 ----
 // Generate a standard NanoID (21 characters)
-RETURN nanoid() AS id;
+RETURN nanoid.generate() AS id;
 // Result: "V1StGXR8_Z5jdHi6B-myT"
 
 // Create a node with NanoID
-CREATE (u:User {id: nanoid(), name: 'Alice'});
+CREATE (u:User {id: nanoid.generate(), name: 'Alice'});
 
 // Use in MERGE operations
-MERGE (p:Product {id: nanoid()})
+MERGE (p:Product {id: nanoid.generate()})
 SET p.name = 'New Product';
 ----
 
@@ -82,11 +82,11 @@ SET p.name = 'New Product';
 [source,cypher]
 ----
 // Generate shorter ID (10 characters)
-RETURN nanoid(10) AS id;
+RETURN nanoid.generateSized(10) AS id;
 // Result: "IRFa-VaY2b"
 
 // Generate longer ID (30 characters)  
-RETURN nanoid(30) AS id;
+RETURN nanoid.generateSized(30) AS id;
 // Result: "6a-9Znp_MRiuZ8sNFbJ1mxBEq2S3K"
 ----
 
@@ -95,19 +95,19 @@ RETURN nanoid(30) AS id;
 [source,cypher]
 ----
 // Use only uppercase letters and numbers
-RETURN nanoid.custom('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
+RETURN nanoid.generateCustomSized('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
 // Result: "A1B2C3D4E5F6"
 
 // Use only digits with default size (21 characters)
-RETURN nanoid.custom('0123456789') AS id;
+RETURN nanoid.generateCustom('0123456789') AS id;
 // Result: "123456789012345678901"
 
 // Use only digits with custom size
-RETURN nanoid.custom('0123456789', 8) AS id;
+RETURN nanoid.generateCustomSized('0123456789', 8) AS id;
 // Result: "12345678"
 
 // Custom alphabet with specific length
-RETURN nanoid.custom('ABCDEF', 16) AS id;
+RETURN nanoid.generateCustomSized('ABCDEF', 16) AS id;
 // Result: "ABCDEFFEDCBABCDE"
 ----
 
@@ -117,11 +117,11 @@ RETURN nanoid.custom('ABCDEF', 16) AS id;
 ----
 // Generate multiple IDs
 UNWIND range(1, 5) AS i
-RETURN nanoid() AS id, i;
+RETURN nanoid.generate() AS id, i;
 
 // Create multiple nodes with unique IDs
 UNWIND ['Alice', 'Bob', 'Charlie'] AS name
-CREATE (u:User {id: nanoid(), name: name});
+CREATE (u:User {id: nanoid.generate(), name: name});
 ----
 
 == Available Functions
@@ -130,21 +130,21 @@ CREATE (u:User {id: nanoid(), name: name});
 |===
 |Function |Description |Example
 
-|`nanoid()`
+|`nanoid.generate()`
 |Generate standard 21-character NanoID
-|`RETURN nanoid()`
+|`RETURN nanoid.generate()`
 
-|`nanoid(size)`
+|`nanoid.generateSized(size)`
 |Generate NanoID with custom size
-|`RETURN nanoid(10)`
+|`RETURN nanoid.generateSized(10)`
 
-|`nanoid.custom(alphabet)`
+|`nanoid.generateCustom(alphabet)`
 |Generate with custom alphabet (21 chars default)
-|`RETURN nanoid.custom('ABC123')`
+|`RETURN nanoid.generateCustom('ABC123')`
 
-|`nanoid.custom(alphabet, size)`
+|`nanoid.generateCustomSized(alphabet, size)`
 |Generate with custom alphabet and size
-|`RETURN nanoid.custom('ABC123', 8)`
+|`RETURN nanoid.generateCustomSized('ABC123', 8)`
 |===
 
 === Error Handling
