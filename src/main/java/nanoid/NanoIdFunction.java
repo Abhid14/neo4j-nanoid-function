@@ -17,8 +17,8 @@ public class NanoIdFunction {
     private static final int NANOID_DEFAULT_SIZE = 21;
 
     // quickid functions - alphanumeric only
-    @UserFunction("quickid")
-    @Description("quickid() - generates a unique ID using alphanumeric characters only (14 chars)")
+    @UserFunction("quickid.generate")
+    @Description("quickid.generate() - generates a unique ID using alphanumeric characters only (14 chars)")
     public String quickidGenerate() {
         return NanoIdUtils.randomNanoId(new java.util.Random(), ALPHANUMERIC_ALPHABET, QUICKID_DEFAULT_SIZE);
     }
@@ -33,8 +33,8 @@ public class NanoIdFunction {
     }
 
     // Standard nanoid function - default size
-    @UserFunction("nanoid")
-    @Description("nanoid() - generates a URL-safe unique ID (21 chars)")
+    @UserFunction("nanoid.generate")
+    @Description("nanoid.generate() - generates a URL-safe unique ID (21 chars)")
     public String nanoidGenerate() {
         return NanoIdUtils.randomNanoId();
     }

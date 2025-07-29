@@ -38,7 +38,7 @@ public class NanoIdFunctionTest {
     @Test
     public void shouldGenerateStandardNanoId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN nanoid() AS id").single();
+            Record record = session.run("RETURN nanoid.generate() AS id").single();
             String nanoId = record.get("id").asString();
 
             assertThat(nanoId).isNotNull();
@@ -86,7 +86,7 @@ public class NanoIdFunctionTest {
     @Test
     public void shouldGenerateQuickId() {
         try (Session session = driver.session()) {
-            Record record = session.run("RETURN quickid() AS id").single();
+            Record record = session.run("RETURN quickid.generate() AS id").single();
             String quickId = record.get("id").asString();
 
             assertThat(quickId).isNotNull();
@@ -147,7 +147,7 @@ public class NanoIdFunctionTest {
             // Generate multiple IDs and ensure they're unique
             Record record = session.run(
                 "UNWIND range(1, 100) AS i " +
-                "RETURN collect(DISTINCT nanoid()) AS ids"
+                "RETURN collect(DISTINCT nanoid.generate()) AS ids"
             ).single();
             
             java.util.List<Object> ids = record.get("ids").asList();
