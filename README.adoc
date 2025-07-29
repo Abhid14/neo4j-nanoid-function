@@ -86,15 +86,15 @@ SET p.name = 'New Product';
 [source,cypher]
 ----
 // Generate shorter QuickID (8 characters, alphanumeric)
-RETURN quickid(8) AS id;
+RETURN quickid.generateSized(8) AS id;
 // Result: "IRFaVaY2"
 
 // Generate longer QuickID (20 characters, alphanumeric)  
-RETURN quickid(20) AS id;
+RETURN quickid.generateSized(20) AS id;
 // Result: "6a9ZnpMRiuZ8sNFbJ1mx"
 
 // Generate custom sized NanoID (URL-safe)
-RETURN nanoid(15) AS id;
+RETURN nanoid.generateSized(15) AS id;
 // Result: "IRFa-VaY2b_XyZ1"
 ----
 
@@ -103,19 +103,19 @@ RETURN nanoid(15) AS id;
 [source,cypher]
 ----
 // Use only uppercase letters and numbers
-RETURN nanoid.custom('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
+RETURN nanoid.generateCustomSized('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 12) AS id;
 // Result: "A1B2C3D4E5F6"
 
 // Use only digits with default size (21 chars)
-RETURN nanoid.custom('0123456789') AS id;
+RETURN nanoid.generateCustom('0123456789') AS id;
 // Result: "123456789012345678901"
 
 // Use only digits with custom size
-RETURN nanoid.custom('0123456789', 8) AS id;
+RETURN nanoid.generateCustomSized('0123456789', 8) AS id;
 // Result: "12345678"
 
 // Custom alphabet with specific length
-RETURN nanoid.custom('ABCDEF', 16) AS id;
+RETURN nanoid.generateCustomSized('ABCDEF', 16) AS id;
 // Result: "ABCDEFFEDCBABCDE"
 ----
 
@@ -146,25 +146,25 @@ RETURN quickid() AS quick_id, nanoid() AS nano_id, i;
 |Generate compact 14-character alphanumeric ID (A-Za-z0-9)
 |`RETURN quickid()`
 
-|`quickid(size)`
+|`quickid.generateSized(size)`
 |Generate alphanumeric ID with custom size
-|`RETURN quickid(8)`
+|`RETURN quickid.generateSized(8)`
 
 |`nanoid()`
 |Generate URL-safe 21-character ID (A-Za-z0-9_-)
 |`RETURN nanoid()`
 
-|`nanoid(size)`
+|`nanoid.generateSized(size)`
 |Generate URL-safe ID with custom size
-|`RETURN nanoid(15)`
+|`RETURN nanoid.generateSized(15)`
 
-|`nanoid.custom(alphabet)`
+|`nanoid.generateCustom(alphabet)`
 |Generate with custom alphabet (21 chars default)
-|`RETURN nanoid.custom('ABC123')`
+|`RETURN nanoid.generateCustom('ABC123')`
 
-|`nanoid.custom(alphabet, size)`
+|`nanoid.generateCustomSized(alphabet, size)`
 |Generate with custom alphabet and size
-|`RETURN nanoid.custom('ABC123', 8)`
+|`RETURN nanoid.generateCustomSized('ABC123', 8)`
 |===
 
 == Comparison with UUID
@@ -209,7 +209,7 @@ RETURN quickid() AS quick_id, nanoid() AS nano_id, i;
 * *Primary Keys*: Use `quickid()` for ultra-compact primary keys (14 chars)
 * *Display IDs*: QuickID provides clean alphanumeric IDs for user-facing identifiers  
 * *URL Slugs*: Use `nanoid()` for URL-safe characters when underscores/dashes are acceptable
-* *API Keys*: Secure random generation with customizable alphabets via `nanoid.custom()`
+* *API Keys*: Secure random generation with customizable alphabets via `nanoid.generateCustom()`
 * *Session IDs*: Compact and secure with flexible character sets
 * *File Names*: QuickID is safe for all file systems (no special characters)
 
@@ -262,14 +262,14 @@ The functions are designed to be robust and always return valid IDs:
 [source,cypher]
 ----
 // Invalid sizes fallback to defaults
-RETURN quickid(0) AS id;         // Returns 14-char alphanumeric ID
-RETURN quickid(-5) AS id;        // Returns 14-char alphanumeric ID
-RETURN nanoid(0) AS id;          // Returns 21-char URL-safe ID
-RETURN nanoid(-5) AS id;         // Returns 21-char URL-safe ID
+RETURN quickid.generateSized(0) AS id;         // Returns 14-char alphanumeric ID
+RETURN quickid.generateSized(-5) AS id;        // Returns 14-char alphanumeric ID
+RETURN nanoid.generateSized(0) AS id;          // Returns 21-char URL-safe ID
+RETURN nanoid.generateSized(-5) AS id;         // Returns 21-char URL-safe ID
 
 // Invalid alphabet falls back to default behavior
-RETURN nanoid.custom('', 10) AS id;    // Returns 21-char URL-safe ID
-RETURN nanoid.custom('   ', 8) AS id;  // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustomSized('', 10) AS id;    // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustomSized('   ', 8) AS id;  // Returns 21-char URL-safe ID
 ----
 
 == Configuration
@@ -278,7 +278,7 @@ The procedure uses an enhanced NanoID configuration:
 
 * *QuickID*: Alphanumeric characters only (A-Za-z0-9) - 62 character alphabet, 14 characters default
 * *NanoID*: URL-safe characters `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters), 21 characters default
-* *Custom*: Fully configurable alphabet and size via `nanoid.custom()`
+* *Custom*: Fully configurable alphabet and size via `nanoid.generateCustom()` and `nanoid.generateCustomSized()`
 * *Collision probability*: 
   - QuickID: ~1% after generating 1 million IDs
   - NanoID: ~1% after generating 1 billion IDs
