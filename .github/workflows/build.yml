@@ -1,9 +1,9 @@
-name: build
+name: build-extended
 
 on:
   push:
     branches:
-      - 2025.x
+      - extended
     paths-ignore:
       - 'README.adoc'
   pull_request:
@@ -21,19 +21,19 @@ jobs:
           java-version: 21
 
       - name: 'Cache Maven packages'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
 
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 'Clean and verify'
         run: ./mvnw --no-transfer-progress clean verify
 
       - name: 'Upload JAR artifacts'
-        if: github.ref == 'refs/heads/2025.x'
+        if: github.ref == 'refs/heads/extended'
         uses: actions/upload-artifact@v4
         with:
           name: neo4j-nanoid-procedure-jar
