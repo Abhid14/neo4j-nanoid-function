@@ -15,7 +15,7 @@ A Neo4j user-defined function that provides NanoID generation capabilities direc
 
 === Prerequisites
 
-* Neo4j 5.x or later (tested with Neo4j 2025.03.0)
+* Neo4j 5.x or later
 * Java 21+
 
 [NOTE]
