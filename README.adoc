@@ -5,22 +5,23 @@ A Neo4j user-defined function that provides NanoID generation capabilities direc
 == Features
 
 * 🚀 *Fast*: High-performance ID generation
-* 🔒 *Secure*: Cryptographically strong random generator
+* 🔒 *Secure*: Cryptographically strong random generator using `java.util.Random`
 * 📏 *Compact*: Shorter than UUID (21 characters vs 36)
 * 🌐 *URL-safe*: Uses URL-safe characters (A-Za-z0-9_-)
 * ⚙️ *Configurable*: Custom alphabet and size support
 * 🔌 *Native*: Direct integration with Neo4j Cypher queries
+* 🛡️ *Robust*: Graceful fallback handling for edge cases
 
 == Installation
 
 === Prerequisites
 
-* Neo4j 5.x or later
+* Neo4j 5.26.0 or later
 * Java 21+
 
 [NOTE]
 ====
-This project requires Java 21 or later. If you're using an older Java version, you'll see a build error. 
+This project requires Java 21 or later and is tested with Neo4j 5.26.0. If you're using an older Java version, you'll see a build error. 
 
 To check your Java version:
 [source,bash]
@@ -126,25 +127,29 @@ CREATE (u:User {id: nanoid.generate(), name: name});
 
 == Available Functions
 
-[cols="1,2,2"]
+[cols="1,2,2,1"]
 |===
-|Function |Description |Example
+|Function |Description |Example |Default Size
 
 |`nanoid.generate()`
-|Generate standard 21-character NanoID
+|Generate standard URL-safe NanoID (A-Za-z0-9_-)
 |`RETURN nanoid.generate()`
+|21 chars
 
 |`nanoid.generateSized(size)`
-|Generate NanoID with custom size
+|Generate URL-safe NanoID with custom size
 |`RETURN nanoid.generateSized(10)`
+|Custom
 
 |`nanoid.generateCustom(alphabet)`
-|Generate with custom alphabet (21 chars default)
+|Generate with custom alphabet (default size)
 |`RETURN nanoid.generateCustom('ABC123')`
+|21 chars
 
 |`nanoid.generateCustomSized(alphabet, size)`
 |Generate with custom alphabet and size
 |`RETURN nanoid.generateCustomSized('ABC123', 8)`
+|Custom
 |===
 
 === Error Handling
@@ -152,8 +157,26 @@ CREATE (u:User {id: nanoid.generate(), name: name});
 The functions include robust error handling:
 
 * **Invalid size**: Negative or zero size values fallback to the standard 21-character NanoID
-* **Empty alphabet**: Empty or null alphabet values fallback to the standard URL-safe alphabet
+* **Empty alphabet**: Empty or null alphabet values fallback to the standard URL-safe alphabet (A-Za-z0-9_-)
+* **Whitespace-only alphabet**: Alphabet strings containing only whitespace fallback to the default behavior
 * **Thread safety**: All functions are thread-safe and can be used concurrently
+
+[source,cypher]
+----
+// Invalid sizes fallback to default 21 characters
+RETURN nanoid.generateSized(0) AS id;          // Returns 21-char NanoID
+RETURN nanoid.generateSized(-5) AS id;         // Returns 21-char NanoID
+RETURN nanoid.generateSized(null) AS id;       // Returns 21-char NanoID
+
+// Invalid alphabets fallback to default behavior
+RETURN nanoid.generateCustom('') AS id;        // Returns 21-char URL-safe NanoID
+RETURN nanoid.generateCustom('   ') AS id;     // Returns 21-char URL-safe NanoID  
+RETURN nanoid.generateCustom(null) AS id;      // Returns 21-char URL-safe NanoID
+
+// Combination of invalid inputs
+RETURN nanoid.generateCustomSized('', 0) AS id;      // Returns 21-char URL-safe NanoID
+RETURN nanoid.generateCustomSized(null, -5) AS id;   // Returns 21-char URL-safe NanoID
+----
 
 == Comparison with UUID
 
@@ -195,7 +218,7 @@ The functions include robust error handling:
 === Prerequisites
 
 * Java 21+
-* Maven 3.6+
+* Maven 3.9.4+
 
 === Build Steps
 
@@ -224,7 +247,14 @@ If you encounter a Java version error during build, make sure you're using Java 
 
 [source,bash]
 ----
+# Run all tests
 ./mvnw test
+
+# Run with detailed output
+./mvnw test -Dtest=NanoIdFunctionTest
+
+# Run specific test methods
+./mvnw test -Dtest=NanoIdFunctionTest#shouldGenerateStandardNanoId
 ----
 
 == Configuration
@@ -234,6 +264,34 @@ The procedure uses the standard NanoID configuration:
 * *Default size*: 21 characters
 * *Default alphabet*: `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters)
 * *Collision probability*: ~1% after generating 1 billion IDs
+* *Edge case handling*: Invalid inputs gracefully fall back to defaults
+
+== Function Behavior
+
+=== Input Validation
+
+The functions are designed to be robust and always return valid IDs:
+
+* **Size validation**: Null, zero, or negative sizes default to 21 characters
+* **Alphabet validation**: Null, empty, or whitespace-only alphabets default to URL-safe characters
+* **Graceful fallback**: All edge cases result in valid NanoID generation rather than errors
+
+=== Alphabet Details
+
+* **Standard alphabet**: Contains 64 URL-safe characters: `A-Za-z0-9_-`
+* **Custom alphabets**: Support any character set you provide
+* **Character repetition**: Custom alphabets can contain repeated characters for weighted randomness
+
+=== Test Coverage
+
+The project includes comprehensive test coverage:
+
+* **Standard generation**: Validates 21-character URL-safe IDs
+* **Custom sizing**: Tests various size parameters including edge cases
+* **Custom alphabets**: Validates numeric-only, letter-only, and special character alphabets
+* **Uniqueness testing**: Ensures 100 generated IDs are all unique
+* **Edge case handling**: Tests null, zero, negative, and empty inputs
+* **Fallback behavior**: Verifies graceful degradation for invalid inputs
 
 == Performance
 
@@ -245,8 +303,10 @@ Benchmarks on standard hardware:
 
 == Dependencies
 
-* link:https://github.com/aventrix/jnanoid[jnanoid]: Core NanoID implementation
-* Neo4j 5.x: Procedure framework
+* link:https://github.com/aventrix/jnanoid[jnanoid 2.0.0]: Core NanoID implementation  
+* Neo4j 5.26.0: Procedure framework
+* JUnit Jupiter 5.11.0: Testing framework (test scope)
+* AssertJ 3.27.3: Assertion library (test scope)
 
 == Contributing
 

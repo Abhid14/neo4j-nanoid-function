@@ -17,8 +17,8 @@
 
   <licenses>
     <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
+      <name>Apache License 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -45,9 +45,9 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <neo4j.version>2025.03.0</neo4j.version>
-    <neo4j-java-driver.version>5.28.4</neo4j-java-driver.version>
-    <junit-jupiter.version>5.11.4</junit-jupiter.version>
+    <neo4j.version>5.26.0</neo4j.version>
+    <neo4j-java-driver.version>5.26.0</neo4j-java-driver.version>
+    <junit-jupiter.version>5.11.0</junit-jupiter.version>
     <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <assertj.version>3.27.3</assertj.version>
@@ -159,14 +159,6 @@
         <version>${maven-shade-plugin.version}</version>
         <configuration>
           <createDependencyReducedPom>false</createDependencyReducedPom>
-          <filters>
-            <filter>
-              <artifact>*:*</artifact>
-              <excludes>
-                <exclude>META-INF/MANIFEST.MF</exclude>
-              </excludes>
-            </filter>
-          </filters>
         </configuration>
         <executions>
           <execution>
