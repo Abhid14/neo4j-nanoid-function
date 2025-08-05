@@ -6,7 +6,7 @@ import org.neo4j.procedure.Name;
 import org.neo4j.procedure.UserFunction;
 
 /**
- * Neo4j user-defined function for generating NanoIDs
+ * Neo4j user-defined function for generating Nano IDs
  */
 public class NanoId {
     private static final int NANOID_DEFAULT_SIZE = 21;
@@ -30,7 +30,7 @@ public class NanoId {
 
     // Custom nanoid function - alphabet only (default size)
     @UserFunction
-    @Description("nanoid.generateCustom(alphabet) - generates a NanoID with custom alphabet (21 chars)")
+    @Description("nanoid.generateCustom(alphabet) - generates a Nano ID with custom alphabet (21 chars)")
     public String generateCustom(@Name("alphabet") String alphabet) {
         // Validate alphabet: must not be null or empty
         if (alphabet == null || alphabet.trim().isEmpty()) {
@@ -42,7 +42,7 @@ public class NanoId {
 
     // Custom nanoid function - alphabet and size
     @UserFunction
-    @Description("nanoid.generateCustomSized(alphabet, size) - generates a NanoID with custom alphabet and size")
+    @Description("nanoid.generateCustomSized(alphabet, size) - generates a Nano ID with custom alphabet and size")
     public String generateCustomSized(
             @Name("alphabet") String alphabet,
             @Name("size") Long size) {

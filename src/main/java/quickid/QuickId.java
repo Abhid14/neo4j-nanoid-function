@@ -6,7 +6,7 @@ import org.neo4j.procedure.Name;
 import org.neo4j.procedure.UserFunction;
 
 /**
- * Neo4j user-defined function for generating NanoIDs
+ * Neo4j user-defined function for generating Quick IDs using Nano ID
  */
 public class QuickId {
 

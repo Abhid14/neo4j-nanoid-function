@@ -10,8 +10,8 @@
   <version>1.0.0-extended</version>
 
   <packaging>jar</packaging>
-  <name>Neo4j NanoID Procedure</name>
-  <description>A Neo4j user-defined function for generating NanoID - tiny, secure, URL-safe, unique string IDs</description>
+  <name>Neo4j Nano ID Procedure</name>
+  <description>A Neo4j user-defined function for generating Nano ID - tiny, secure, URL-safe, unique string IDs</description>
   <url>https://github.com/Abhid14/neo4j-nanoid-procedure</url>
   <inceptionYear>2025</inceptionYear>
 
@@ -69,7 +69,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- NanoID dependency -->
+    <!-- Nano ID dependency -->
     <dependency>
       <groupId>com.aventrix.jnanoid</groupId>
       <artifactId>jnanoid</artifactId>
