@@ -1,6 +1,6 @@
-= Neo4j NanoID Procedure
+= Neo4j Nano ID Procedure
 
-A Neo4j user-defined function that provides NanoID generation capabilities directly within Cypher queries. NanoID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
+A Neo4j user-defined function that provides Nano ID generation capabilities directly within Cypher queries. Nano ID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
 
 == Features
 
@@ -66,11 +66,11 @@ RETURN nanoid.generate() AS id;
 
 [source,cypher]
 ----
-// Generate a standard NanoID (21 characters)
+// Generate a standard Nano ID (21 characters)
 RETURN nanoid.generate() AS id;
 // Result: "V1StGXR8_Z5jdHi6B-myT"
 
-// Create a node with NanoID
+// Create a node with Nano ID
 CREATE (u:User {id: nanoid.generate(), name: 'Alice'});
 
 // Use in MERGE operations
@@ -132,12 +132,12 @@ CREATE (u:User {id: nanoid.generate(), name: name});
 |Function |Description |Example |Default Size
 
 |`nanoid.generate()`
-|Generate standard URL-safe NanoID (A-Za-z0-9_-)
+|Generate standard URL-safe Nano ID (A-Za-z0-9_-)
 |`RETURN nanoid.generate()`
 |21 chars
 
 |`nanoid.generateSized(size)`
-|Generate URL-safe NanoID with custom size
+|Generate URL-safe Nano ID with custom size
 |`RETURN nanoid.generateSized(10)`
 |Custom
 
@@ -156,7 +156,7 @@ CREATE (u:User {id: nanoid.generate(), name: name});
 
 The functions include robust error handling:
 
-* **Invalid size**: Negative or zero size values fallback to the standard 21-character NanoID
+* **Invalid size**: Negative or zero size values fallback to the standard 21-character Nano ID
 * **Empty alphabet**: Empty or null alphabet values fallback to the standard URL-safe alphabet (A-Za-z0-9_-)
 * **Whitespace-only alphabet**: Alphabet strings containing only whitespace fallback to the default behavior
 * **Thread safety**: All functions are thread-safe and can be used concurrently
@@ -164,25 +164,25 @@ The functions include robust error handling:
 [source,cypher]
 ----
 // Invalid sizes fallback to default 21 characters
-RETURN nanoid.generateSized(0) AS id;          // Returns 21-char NanoID
-RETURN nanoid.generateSized(-5) AS id;         // Returns 21-char NanoID
-RETURN nanoid.generateSized(null) AS id;       // Returns 21-char NanoID
+RETURN nanoid.generateSized(0) AS id;          // Returns 21-char Nano ID
+RETURN nanoid.generateSized(-5) AS id;         // Returns 21-char Nano ID
+RETURN nanoid.generateSized(null) AS id;       // Returns 21-char Nano ID
 
 // Invalid alphabets fallback to default behavior
-RETURN nanoid.generateCustom('') AS id;        // Returns 21-char URL-safe NanoID
-RETURN nanoid.generateCustom('   ') AS id;     // Returns 21-char URL-safe NanoID  
-RETURN nanoid.generateCustom(null) AS id;      // Returns 21-char URL-safe NanoID
+RETURN nanoid.generateCustom('') AS id;        // Returns 21-char URL-safe Nano ID
+RETURN nanoid.generateCustom('   ') AS id;     // Returns 21-char URL-safe Nano ID  
+RETURN nanoid.generateCustom(null) AS id;      // Returns 21-char URL-safe Nano ID
 
 // Combination of invalid inputs
-RETURN nanoid.generateCustomSized('', 0) AS id;      // Returns 21-char URL-safe NanoID
-RETURN nanoid.generateCustomSized(null, -5) AS id;   // Returns 21-char URL-safe NanoID
+RETURN nanoid.generateCustomSized('', 0) AS id;      // Returns 21-char URL-safe Nano ID
+RETURN nanoid.generateCustomSized(null, -5) AS id;   // Returns 21-char URL-safe Nano ID
 ----
 
 == Comparison with UUID
 
 [cols="1,1,1"]
 |===
-|Feature |NanoID |UUID
+|Feature |Nano ID |UUID
 
 |Length
 |21 characters
@@ -259,7 +259,7 @@ If you encounter a Java version error during build, make sure you're using Java 
 
 == Configuration
 
-The procedure uses the standard NanoID configuration:
+The procedure uses the standard Nano ID configuration:
 
 * *Default size*: 21 characters
 * *Default alphabet*: `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters)
@@ -274,7 +274,7 @@ The functions are designed to be robust and always return valid IDs:
 
 * **Size validation**: Null, zero, or negative sizes default to 21 characters
 * **Alphabet validation**: Null, empty, or whitespace-only alphabets default to URL-safe characters
-* **Graceful fallback**: All edge cases result in valid NanoID generation rather than errors
+* **Graceful fallback**: All edge cases result in valid Nano ID generation rather than errors
 
 === Alphabet Details
 
@@ -303,7 +303,7 @@ Benchmarks on standard hardware:
 
 == Dependencies
 
-* link:https://github.com/aventrix/jnanoid[jnanoid 2.0.0]: Core NanoID implementation  
+* link:https://github.com/aventrix/jnanoid[jnanoid 2.0.0]: Core Nano ID implementation  
 * Neo4j 5.26.0: Procedure framework
 * JUnit Jupiter 5.11.0: Testing framework (test scope)
 * AssertJ 3.27.3: Assertion library (test scope)
@@ -322,7 +322,7 @@ This project is licensed under the Apache License 2.0 - see the link:LICENSE[LIC
 
 == Acknowledgments
 
-* link:https://github.com/ai/nanoid[NanoID] - Original JavaScript implementation
+* link:https://github.com/ai/nanoid[Nano ID] - Original JavaScript implementation
 * link:https://github.com/aventrix/jnanoid[jnanoid] - Java port
 * link:https://neo4j.com[Neo4j] - Graph database platform
 
