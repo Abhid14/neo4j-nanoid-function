@@ -23,7 +23,7 @@ public class NanoIdFunctionTest {
     void initializeNeo4j() {
         this.embeddedDatabaseServer = Neo4jBuilders.newInProcessBuilder()
                 .withDisabledServer()
-                .withFunction(NanoIdFunction.class)
+                .withFunction(NanoId.class)
                 .build();
 
         this.driver = GraphDatabase.driver(embeddedDatabaseServer.boltURI());
@@ -84,30 +84,6 @@ public class NanoIdFunctionTest {
     }
 
     @Test
-    public void shouldGenerateQuickId() {
-        try (Session session = driver.session()) {
-            Record record = session.run("RETURN quickid.generate() AS id").single();
-            String quickId = record.get("id").asString();
-
-            assertThat(quickId).isNotNull();
-            assertThat(quickId).hasSize(14); // Default quickid size
-            assertThat(quickId).matches("[A-Za-z0-9]+"); // Alphanumeric only
-        }
-    }
-
-    @Test
-    public void shouldGenerateSizedQuickId() {
-        try (Session session = driver.session()) {
-            Record record = session.run("RETURN quickid.generateSized(10) AS id").single();
-            String quickId = record.get("id").asString();
-
-            assertThat(quickId).isNotNull();
-            assertThat(quickId).hasSize(10);
-            assertThat(quickId).matches("[A-Za-z0-9]+"); // Alphanumeric only
-        }
-    }
-
-    @Test
     public void shouldHandleEdgeCases() {
         try (Session session = driver.session()) {
             // Test nanoid with negative size - should fallback to default
@@ -121,21 +97,9 @@ public class NanoIdFunctionTest {
             assertThat(nanoId2).hasSize(21); // Falls back to default behavior
             assertThat(nanoId2).matches("[A-Za-z0-9_-]+"); // Uses URL-safe alphabet
 
-            // Test quickid with negative size - should fallback to default
-            Record record3 = session.run("RETURN quickid.generateSized(-3) AS id").single();
-            String quickId = record3.get("id").asString();
-            assertThat(quickId).hasSize(14); // Falls back to quickid default size
-            assertThat(quickId).matches("[A-Za-z0-9]+");
-
-            // Test quickid with null size - should fallback to default
-            Record record4 = session.run("RETURN quickid.generateSized(null) AS id").single();
-            String quickId2 = record4.get("id").asString();
-            assertThat(quickId2).hasSize(14); // Falls back to quickid default size
-            assertThat(quickId2).matches("[A-Za-z0-9]+");
-
             // Test nanoid.custom with null alphabet - should fallback to default
-            Record record5 = session.run("RETURN nanoid.generateCustom(null) AS id").single();
-            String nanoId3 = record5.get("id").asString();
+            Record record3 = session.run("RETURN nanoid.generateCustom(null) AS id").single();
+            String nanoId3 = record3.get("id").asString();
             assertThat(nanoId3).hasSize(21); // Default size
             assertThat(nanoId3).matches("[A-Za-z0-9_-]+"); // Default alphabet
         }
@@ -186,14 +150,9 @@ public class NanoIdFunctionTest {
             String nanoId = record1.get("id").asString();
             assertThat(nanoId).hasSize(21); // Falls back to default
 
-            // Test quickid with zero size - should fallback to default
-            Record record2 = session.run("RETURN quickid.generateSized(0) AS id").single();
-            String quickId = record2.get("id").asString();
-            assertThat(quickId).hasSize(14); // Falls back to default
-
             // Test custom nanoid with zero size - should fallback to default
-            Record record3 = session.run("RETURN nanoid.generateCustomSized('ABC', 0) AS id").single();
-            String customId = record3.get("id").asString();
+            Record record2 = session.run("RETURN nanoid.generateCustomSized('ABC', 0) AS id").single();
+            String customId = record2.get("id").asString();
             assertThat(customId).hasSize(21); // Falls back to default
             assertThat(customId).matches("[ABC]+");
         }

@@ -1,26 +1,27 @@
 = Neo4j NanoID Procedure (Extended)
 
-A Neo4j user-defined function that provides NanoID generation capabilities directly within Cypher queries. NanoID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
+A Neo4j user-defined function that provides NanoID generation capabilities directly within Cypher queries. This extended version offers both standard NanoID and QuickID variants for different use cases. NanoID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
 
 == Features
 
-* 🔒 *Secure*: Cryptographically strong random generator
-* 📏 *Compact*: Shorter than UUID (21 characters vs 36)
-* ⚡ *QuickID*: Ultra-compact 14-character alphanumeric IDs with `quickid()`
-* 🌐 *URL-safe*: Standard NanoID with underscore and dash support
-* ⚙️ *Configurable*: Custom alphabet and size support
+* 🔒 *Secure*: Cryptographically strong random generator using `java.util.Random`
+* 📏 *Compact*: Shorter than UUID (21 characters vs 36 for NanoID, 14 for QuickID)
+* ⚡ *QuickID*: Ultra-compact 14-character alphanumeric IDs (A-Za-z0-9 only)
+* 🌐 *URL-safe*: Standard NanoID with underscore and dash support (A-Za-z0-9_-)
+* ⚙️ *Configurable*: Custom alphabet and size support for NanoID functions
 * 🔌 *Native*: Direct integration with Neo4j Cypher queries
+* 🛡️ *Robust*: Graceful fallback handling for edge cases
 
 == Installation
 
 === Prerequisites
 
-* Neo4j 5.x or later
+* Neo4j 5.26.0 or later
 * Java 21+
 
 [NOTE]
 ====
-This project requires Java 21 or later. If you're using an older Java version, you'll see a build error. 
+This project requires Java 21 or later and is tested with Neo4j 5.26.0. If you're using an older Java version, you'll see a build error. 
 
 To check your Java version:
 [source,bash]
@@ -44,19 +45,23 @@ sdk use java 21.0.2-tem
 
 === Steps
 
-. Download the latest JAR which has the `-extended` suffix from the link:../../releases[releases page]
+. Download the latest JAR with the `-extended` suffix from the link:../../releases[releases page]
 . Copy the JAR file to your Neo4j `plugins` directory:
 +
 [source,bash]
 ----
-cp neo4j-nanoid-procedure-1.x.x-extended.jar $NEO4J_HOME/plugins/
+cp neo4j-nanoid-procedure-1.0.0-extended.jar $NEO4J_HOME/plugins/
 ----
 . Restart your Neo4j instance
-. Verify installation:
+. Verify installation by testing both function types:
 +
 [source,cypher]
 ----
-RETURN quickid.generate() AS id;
+// Test QuickID generation
+RETURN quickid.generate() AS quick_id;
+
+// Test NanoID generation  
+RETURN nanoid.generate() AS nano_id;
 ----
 
 == Usage
@@ -138,33 +143,39 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 
 == Available Functions
 
-[cols="1,2,2"]
+[cols="1,2,2,1"]
 |===
-|Function |Description |Example
+|Function |Description |Example |Default Size
 
 |`quickid.generate()`
-|Generate compact 14-character alphanumeric ID (A-Za-z0-9)
+|Generate compact alphanumeric ID (A-Za-z0-9)
 |`RETURN quickid.generate()`
+|14 chars
 
 |`quickid.generateSized(size)`
 |Generate alphanumeric ID with custom size
 |`RETURN quickid.generateSized(8)`
+|Custom
 
 |`nanoid.generate()`
-|Generate URL-safe 21-character ID (A-Za-z0-9_-)
+|Generate URL-safe ID (A-Za-z0-9_-)
 |`RETURN nanoid.generate()`
+|21 chars
 
 |`nanoid.generateSized(size)`
 |Generate URL-safe ID with custom size
 |`RETURN nanoid.generateSized(15)`
+|Custom
 
 |`nanoid.generateCustom(alphabet)`
-|Generate with custom alphabet (21 chars default)
+|Generate with custom alphabet (default size)
 |`RETURN nanoid.generateCustom('ABC123')`
+|21 chars
 
 |`nanoid.generateCustomSized(alphabet, size)`
 |Generate with custom alphabet and size
 |`RETURN nanoid.generateCustomSized('ABC123', 8)`
+|Custom
 |===
 
 == Comparison with UUID
@@ -183,6 +194,11 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 |URL-safe (64 chars)
 |Hex + hyphens
 
+|Characters Used
+|A-Za-z0-9
+|A-Za-z0-9_-
+|0-9a-f + hyphens
+
 |URL-safe
 |✅ Always (no special chars)
 |✅ Yes (_- included)
@@ -190,8 +206,8 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 
 |Collision probability
 |~1% after 1M IDs
+|~1% after 1B IDs
 |Same as UUID v4
-|2^122
 
 |Performance
 |~60% faster
@@ -202,6 +218,11 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 |✅ Ultra-clean
 |✅ Clean
 |❌ Contains hyphens
+
+|Customizable
+|❌ Size only
+|✅ Alphabet & size
+|❌ Fixed format
 |===
 
 == Use Cases
@@ -218,7 +239,7 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 === Prerequisites
 
 * Java 21+
-* Maven 3.6+
+* Maven 3.9.4+
 
 === Build Steps
 
@@ -233,7 +254,7 @@ git checkout extended
 ./mvnw clean package
 
 # The JAR will be created in target/
-ls target/*.jar
+ls target/neo4j-nanoid-procedure-1.0.0-extended.jar
 ----
 
 [TIP]
@@ -245,7 +266,17 @@ If you encounter a Java version error during build, make sure you're using Java 
 
 [source,bash]
 ----
+# Run all tests
 ./mvnw test
+
+# Run tests with detailed output
+./mvnw test -Dtest=NanoIdFunctionTest,QuickIdFunctionTest
+
+# Run only QuickID tests
+./mvnw test -Dtest=QuickIdFunctionTest
+
+# Run only NanoID tests  
+./mvnw test -Dtest=NanoIdFunctionTest
 ----
 
 == Function Behavior
@@ -253,7 +284,11 @@ If you encounter a Java version error during build, make sure you're using Java 
 === QuickID vs NanoID
 
 * *`quickid.generate()`*: Returns ultra-compact 14-character alphanumeric IDs (A-Za-z0-9) - ideal for primary keys and space-constrained scenarios
-* *`nanoid.generate()`*: Returns standard 21-character URL-safe IDs with underscores and dashes (A-Za-z0-9_-) - compatible with original NanoID spec
+* *`quickid.generateSized(size)`*: Same alphanumeric alphabet but with custom length
+* *`nanoid.generate()`*: Returns standard 21-character URL-safe IDs with underscores and dashes (A-Za-z0-9_-) - compatible with original NanoID spec  
+* *`nanoid.generateSized(size)`*: URL-safe alphabet with custom length
+* *`nanoid.generateCustom(alphabet)`*: Custom alphabet with default 21-character length
+* *`nanoid.generateCustomSized(alphabet, size)`*: Fully customizable alphabet and length
 
 === Edge Case Handling
 
@@ -262,23 +297,36 @@ The functions are designed to be robust and always return valid IDs:
 [source,cypher]
 ----
 // Invalid sizes fallback to defaults
-RETURN quickid.generateSized(0) AS id;         // Returns 14-char alphanumeric ID
+RETURN quickid.generateSized(0) AS id;         // Returns 14-char alphanumeric ID  
 RETURN quickid.generateSized(-5) AS id;        // Returns 14-char alphanumeric ID
+RETURN quickid.generateSized(null) AS id;      // Returns 14-char alphanumeric ID
 RETURN nanoid.generateSized(0) AS id;          // Returns 21-char URL-safe ID
 RETURN nanoid.generateSized(-5) AS id;         // Returns 21-char URL-safe ID
 
 // Invalid alphabet falls back to default behavior
-RETURN nanoid.generateCustomSized('', 10) AS id;    // Returns 21-char URL-safe ID
-RETURN nanoid.generateCustomSized('   ', 8) AS id;  // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustomSized('', 10) AS id;      // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustomSized('   ', 8) AS id;    // Returns 21-char URL-safe ID  
+RETURN nanoid.generateCustomSized(null, 8) AS id;     // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustom('') AS id;               // Returns 21-char URL-safe ID
+RETURN nanoid.generateCustom(null) AS id;             // Returns 21-char URL-safe ID
 ----
 
 == Configuration
 
 The procedure uses an enhanced NanoID configuration:
 
-* *QuickID*: Alphanumeric characters only (A-Za-z0-9) - 62 character alphabet, 14 characters default
-* *NanoID*: URL-safe characters `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters), 21 characters default
-* *Custom*: Fully configurable alphabet and size via `nanoid.generateCustom()` and `nanoid.generateCustomSized()`
+* *QuickID*: 
+  - Alphabet: Alphanumeric characters only (A-Za-z0-9) - 62 character alphabet
+  - Default size: 14 characters
+  - Use cases: Primary keys, compact identifiers, file-safe names
+* *NanoID*: 
+  - Alphabet: URL-safe characters `_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` (64 characters)
+  - Default size: 21 characters  
+  - Use cases: URLs, general-purpose IDs, web-safe identifiers
+* *Custom NanoID*: 
+  - Alphabet: Fully configurable via `nanoid.generateCustom()` and `nanoid.generateCustomSized()`
+  - Size: Fully configurable
+  - Use cases: Specialized requirements, branded IDs, restricted character sets
 * *Collision probability*: 
   - QuickID: ~1% after generating 1 million IDs
   - NanoID: ~1% after generating 1 billion IDs
@@ -294,8 +342,10 @@ Benchmarks on standard hardware:
 
 == Dependencies
 
-* link:https://github.com/aventrix/jnanoid[jnanoid]: Core NanoID implementation
-* Neo4j 5.x: Procedure framework
+* link:https://github.com/aventrix/jnanoid[jnanoid 2.0.0]: Core NanoID implementation  
+* Neo4j 5.26.0: Procedure framework
+* JUnit Jupiter 5.11.0: Testing framework (test scope)
+* AssertJ 3.27.3: Assertion library (test scope)
 
 == Contributing
 
