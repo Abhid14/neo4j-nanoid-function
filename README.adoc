@@ -1,4 +1,4 @@
-= Neo4j Nano ID Procedure (Extended)
+= Neo4j Nano ID Function (Extended)
 
 A Neo4j user-defined function that provides Nano ID generation capabilities directly within Cypher queries. This extended version offers both standard Nano ID and Quick ID variants for different use cases. Nano ID is a tiny, secure, URL-safe, unique string ID generator that's an excellent alternative to UUID.
 
@@ -50,7 +50,7 @@ sdk use java 21.0.2-tem
 +
 [source,bash]
 ----
-cp neo4j-nanoid-procedure-1.0.0-extended.jar $NEO4J_HOME/plugins/
+cp neo4j-nanoid-function-1.0.0-extended.jar $NEO4J_HOME/plugins/
 ----
 . Restart your Neo4j instance
 . Verify installation by testing both function types:
@@ -246,15 +246,15 @@ RETURN quickid.generate() AS quick_id, nanoid.generate() AS nano_id, i;
 [source,bash]
 ----
 # Clone the repository
-git clone https://github.com/Abhid14/neo4j-nanoid-procedure.git
-cd neo4j-nanoid-procedure
+git clone https://github.com/Abhid14/neo4j-nanoid-function.git
+cd neo4j-nanoid-function
 git checkout extended
 
 # Build the project
 ./mvnw clean package
 
 # The JAR will be created in target/
-ls target/neo4j-nanoid-procedure-1.0.0-extended.jar
+ls target/neo4j-nanoid-function-1.0.0-extended.jar
 ----
 
 [TIP]
@@ -313,7 +313,7 @@ RETURN nanoid.generateCustom(null) AS id;             // Returns 21-char URL-saf
 
 == Configuration
 
-The procedure uses an enhanced Nano ID configuration:
+The function uses an enhanced Nano ID configuration:
 
 * *Quick ID*: 
   - Alphabet: Alphanumeric characters only (A-Za-z0-9) - 62 character alphabet
@@ -343,7 +343,7 @@ Benchmarks on standard hardware:
 == Dependencies
 
 * link:https://github.com/aventrix/jnanoid[jnanoid 2.0.0]: Core Nano ID implementation  
-* Neo4j 5.26.0: Procedure framework
+* Neo4j 5.26.0: Function framework
 * JUnit Jupiter 5.11.0: Testing framework (test scope)
 * AssertJ 3.27.3: Assertion library (test scope)
 

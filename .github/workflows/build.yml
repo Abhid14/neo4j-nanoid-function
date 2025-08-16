@@ -36,6 +36,6 @@ jobs:
         if: github.ref == 'refs/heads/extended'
         uses: actions/upload-artifact@v4
         with:
-          name: neo4j-nanoid-procedure-jar
-          path: target/neo4j-nanoid-procedure-*.jar
+          name: neo4j-nanoid-function-jar
+          path: target/neo4j-nanoid-function-*.jar
           retention-days: 30
