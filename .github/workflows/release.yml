@@ -43,7 +43,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/neo4j-nanoid-procedure-*.jar
+            target/neo4j-nanoid-function-*.jar
           generate_release_notes: true
           draft: false
           prerelease: false
